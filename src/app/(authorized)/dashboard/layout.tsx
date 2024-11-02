@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Prompt } from 'next/font/google';
 import '../../globals.css';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import SidebarAdmin from '@/components/common/sidebar-admin';
 
 const promptBody = Prompt({
