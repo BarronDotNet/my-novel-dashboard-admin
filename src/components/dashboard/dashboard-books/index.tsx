@@ -40,11 +40,7 @@ const DashboardBooks = () => {
   useEffect(() => {
     fetchData();
   }, [pageNumber, perPage, searchQuery, selectedSort]);
-
-  // คำนวณจำนวนหน้าทั้งหมด
   const totalPages = pagination ? Math.ceil(pagination.count / perPage) : 1;
-
-  // ฟังก์ชันจัดการการเปลี่ยนหน้า
   const handlePageChange = (newPage: number) => {
     setPageNumber(newPage);
   };

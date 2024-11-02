@@ -312,3 +312,64 @@ export async function getEpisodesPaginationByProductId(
     throw new Error('Failed to fetch episodes');
   }
 }
+
+export async function getPaginationEpisodesInProductNovel(
+  mongoClient: MongoClient,
+  ProductId: string,
+  query: IQueryEpisodes
+) {
+  const { page, perPage, sort, searchBy } = query;
+  const db = mongoClient.db('product');
+
+  const skip = (page - 1) * perPage;
+  const limit = perPage;
+
+  const pipeline: any[] = [
+    { $match: { 'EpTopic.ProductId': ProductId } },
+    { $unwind: '$EpTopic' },
+    { $match: { 'EpTopic.ProductId': ProductId } },
+  ];
+
+  if (searchBy) {
+    pipeline.push({
+      $match: { 'EpTopic.EpName': { $regex: searchBy, $options: 'i' } },
+    });
+  }
+
+  const sortStage =
+    sort && Object.keys(sort).length > 0
+      ? { ...sort, 'EpTopic.createDate': 1 }
+      : { 'EpTopic.createDate': 1 };
+  pipeline.push({ $sort: sortStage });
+
+  pipeline.push({ $skip: skip });
+  pipeline.push({ $limit: limit });
+
+  const results = await db
+    .collection('products_info')
+    .aggregate(pipeline)
+    .toArray();
+
+  const totalEpisodes = await db
+    .collection('products_info')
+    .aggregate([
+      { $match: { id: ProductId } },
+      { $unwind: '$EpTopic' },
+      ...(searchBy
+        ? [
+            {
+              $match: { 'EpTopic.EpName': { $regex: searchBy, $options: 'i' } },
+            },
+          ]
+        : []),
+      { $count: 'count' },
+    ])
+    .toArray();
+
+  return {
+    records: results.map((item) => item.EpTopic),
+    total: totalEpisodes[0]?.count || 0,
+    page,
+    perPage,
+  };
+}

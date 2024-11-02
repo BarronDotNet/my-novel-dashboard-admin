@@ -10,6 +10,7 @@ import { IProductNovels } from '@/interfaces/product-novels.interface';
 import { MdModeEditOutline, MdDeleteOutline } from 'react-icons/md';
 import CommonLoading from '@/components/common/loading';
 import Link from 'next/link';
+import PageUrls from '@/constants/page-urls';
 
 interface IProps {
   books?: IProductNovels[];
@@ -48,7 +49,7 @@ const BooksTableData = ({ books, isLoading }: IProps) => {
                 <TableCell className="p-4">
                   <Link
                     className="font-bold size-12"
-                    href={`/books/${book._id}`}
+                    href={`${PageUrls.MANAGE_BOOKS}/${book._id}`}
                   >
                     {book.ProductName}
                   </Link>

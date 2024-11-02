@@ -1,3 +1,5 @@
+import { IProductEpisodes } from '@/interfaces/product-episodes.interface';
+
 export interface IProductNovels {
   migrationDocumentId: string;
   CreateBy: {
@@ -6,17 +8,7 @@ export interface IProductNovels {
   };
   EpCount: number;
   EpLastUpdate: Date;
-  EpTopic: Array<{
-    EpId: string;
-    EpName: string;
-    EpPrice: number;
-    ProductId: string;
-    ProductTypeSet: string;
-    createDate: Date | null;
-    isPublish: boolean;
-    EpView: number;
-    EpOldId: string;
-  }>;
+  EpTopic: IProductEpisodes[];
   FieldUrl: string | null;
   HasEP: boolean;
   ImageUrl: string;
