@@ -21,22 +21,22 @@ import {
 
 const sortOption = [
   {
-    label: 'เรียงตามตัวอีกษร (A-Z) (ก-ฮ) (username)',
+    label: 'เรียงตามตัวอักษร (A-Z) (ก-ฮ) (username)',
     value: 'username_asc',
     criteria: { username: -1 },
   },
   {
-    label: 'เรียงตามตัวอีกษร (Z-A) (ฮ-ก) (username)',
+    label: 'เรียงตามตัวอักษร (Z-A) (ฮ-ก) (username)',
     value: 'username_desc',
     criteria: { username: 1 },
   },
   {
-    label: 'เรียงตามตัวอีกษร (A-Z) (ก-ฮ) (email)',
+    label: 'เรียงตามตัวอักษร (A-Z) (ก-ฮ) (email)',
     value: 'email_asc',
     criteria: { email: -1 },
   },
   {
-    label: 'เรียงตามตัวอีกษร (Z-A) (ฮ-ก) (email)',
+    label: 'เรียงตามตัวอักษร (Z-A) (ฮ-ก) (email)',
     value: 'email_desc',
     criteria: { email: 1 },
   },

@@ -28,33 +28,17 @@ const sortOptions: SortOption[] = [
 ];
 
 interface FilterHeaderEpisodesProps {
-  onFilterChange: (params: {
-    searchBy: string;
-    perPage: number;
-    sort: Record<string, number | boolean>;
-  }) => void;
+  onFilterChange: (params: { searchBy: string }) => void;
 }
 
 const FilterHeaderEpisodes = ({
   onFilterChange,
 }: FilterHeaderEpisodesProps) => {
   const [searchBy, setSearchBy] = useState('');
-  const [perPage, setPerPage] = useState(20);
-  const [selectedSort, setSelectedSort] = useState(sortOptions[0]);
 
   const handleSearch = () => {
     onFilterChange({
       searchBy,
-      perPage,
-      sort: selectedSort.value,
-    });
-  };
-
-  const handlePerPageSubmit = () => {
-    onFilterChange({
-      searchBy: searchBy || '',
-      perPage: perPage || 20,
-      sort: selectedSort.value,
     });
   };
 
@@ -75,45 +59,6 @@ const FilterHeaderEpisodes = ({
         >
           <CiSearch size={20} />
         </Button>
-      </div>
-
-      <div className="flex items-center justify-between gap-2">
-        <Input
-          type="number"
-          placeholder="จำนวนการแสดง"
-          value={perPage}
-          onChange={(e) => setPerPage(Number(e.target.value))}
-          className="border-gray-300 rounded-lg w-40 px-4 py-2"
-        />
-        <Button variant="ghost" onClick={handlePerPageSubmit}>
-          Submit
-        </Button>
-        <Select
-          value={selectedSort.label}
-          onValueChange={(value) => {
-            const sortOption = sortOptions.find(
-              (option) => option.label === value
-            );
-            if (sortOption) {
-              setSelectedSort(sortOption);
-              handleSearch();
-            }
-          }}
-        >
-          <SelectTrigger className="w-64 border-gray-300 rounded-lg">
-            <SelectValue placeholder={selectedSort.label} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>ตัวเลือกการจัดเรียง</SelectLabel>
-              {sortOptions.map((option, index) => (
-                <SelectItem key={index} value={option.label}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
       </div>
     </div>
   );

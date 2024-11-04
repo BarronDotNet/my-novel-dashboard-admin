@@ -73,4 +73,10 @@ export class UsersService extends UsersProviders {
       records: result.records,
     };
   };
+
+  getUserById = async (id: string): Promise<IUsers | null> => {
+    return this.db
+      .collection<IUsers>(COLLECTION_NAME.REGISTER)
+      .findOne({ migrationDocumentId: id });
+  };
 }

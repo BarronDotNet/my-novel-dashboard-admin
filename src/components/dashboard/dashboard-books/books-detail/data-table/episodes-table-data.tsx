@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import {
   ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  useReactTable,
-  getPaginationRowModel,
-  SortingState,
-  getSortedRowModel,
-  ColumnFiltersState,
   getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
 import {
@@ -36,68 +36,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { MdOutlinePublish } from 'react-icons/md';
-import { CiTimer } from 'react-icons/ci';
+import {
+  MdOutlineHideImage,
+  MdOutlinePublish,
+  MdOutlineManageSearch,
+} from 'react-icons/md';
+import { CiTimer, CiViewList } from 'react-icons/ci';
 import { LiaCalendarTimes } from 'react-icons/lia';
-import { MdOutlineHideImage } from 'react-icons/md';
 import { TiDeleteOutline } from 'react-icons/ti';
+import MangeEpDialog from '@/components/dashboard/dashboard-books/books-detail/ep-dialog/mange-ep-dialog';
+import { IProductEpisodes } from '@/interfaces/product-episodes.interface';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  columns: ColumnDef<IProductEpisodes>[];
+  data: IProductEpisodes[];
   perPage: number;
   isLoading: boolean;
 }
 
 const manageOptions = [
+  { label: 'การจัดการ', value: 'management', icon: <MdOutlineManageSearch /> },
+  { label: 'จัดการตอน', value: 'manageEp', icon: <CiViewList /> },
   {
     label: 'ตั้งราคา',
     value: 'setPrice',
     icon: <img src="/images/M-coin.png" alt="Set Price" className="w-4 h-4" />,
   },
-  {
-    label: 'เผยแพร่',
-    value: 'isPublish',
-    icon: <MdOutlinePublish />,
-  },
-  {
-    label: 'ตั้งเวลาเผยแพร่',
-    value: 'setIsPublish',
-    icon: <CiTimer />,
-  },
+  { label: 'เผยแพร่', value: 'isPublish', icon: <MdOutlinePublish /> },
+  { label: 'ตั้งเวลาเผยแพร่', value: 'setIsPublish', icon: <CiTimer /> },
   {
     label: 'ยกเลิกตั้งเวลาเผยแพร่',
     value: 'cancelSetIsPublish',
     icon: <LiaCalendarTimes />,
   },
-  {
-    label: 'ปิดเนื้อหา',
-    value: 'hidden',
-    icon: <MdOutlineHideImage />,
-  },
-  {
-    label: 'ลบ',
-    value: 'delete',
-    icon: <TiDeleteOutline />,
-  },
+  { label: 'ปิดเนื้อหา', value: 'hidden', icon: <MdOutlineHideImage /> },
+  { label: 'ลบ', value: 'delete', icon: <TiDeleteOutline /> },
 ];
 
-const EpisodesTableData = <TData, TValue>({
+const EpisodesTableData = ({
   columns,
   data,
   perPage,
   isLoading,
-}: DataTableProps<TData, TValue>) => {
+}: DataTableProps) => {
+  const [episodeData, setEpisodeData] = useState<IProductEpisodes[]>(data);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
   const [areOptionsEnabled, setAreOptionsEnabled] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('จัดการ');
+  const [selectedOption, setSelectedOption] = useState('management');
+  const [isMangeEpDialogOpen, setIsMangeEpDialogOpen] = useState(false);
 
   const table = useReactTable({
-    data,
+    data: episodeData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -113,34 +105,37 @@ const EpisodesTableData = <TData, TValue>({
       columnVisibility,
       rowSelection,
     },
-    initialState: {
-      pagination: { pageSize: perPage },
-    },
+    initialState: { pagination: { pageSize: perPage } },
   });
+
+  const handleSelectOption = (value: string) => {
+    setSelectedOption(value);
+    if (value === 'manageEp') setIsMangeEpDialogOpen(true);
+  };
+
+  const closeMangeEpDialog = () => {
+    setIsMangeEpDialogOpen(false);
+    setSelectedOption('การจัดการ');
+  };
 
   useEffect(() => {
     const hasSelection = Object.keys(rowSelection).length > 0;
     setAreOptionsEnabled(hasSelection);
-    if (!hasSelection) {
-      setSelectedOption('จัดการ');
-    }
+    if (!hasSelection) setSelectedOption('การจัดการ');
   }, [rowSelection]);
 
-  if (isLoading) {
-    return <CommonLoading />;
-  }
+  if (isLoading) return <CommonLoading />;
 
   return (
     <div>
       <div className="mt-5">
-        <Select>
+        <Select onValueChange={handleSelectOption}>
           <SelectTrigger
             className={`w-[180px] ${!areOptionsEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={!areOptionsEnabled}
           >
-            <SelectValue placeholder={selectedOption || 'จัดการ'} />
+            <SelectValue placeholder={selectedOption || 'การจัดการ'} />
           </SelectTrigger>
-
           <SelectContent>
             <SelectGroup>
               <SelectLabel>ตัวเลือก</SelectLabel>
@@ -193,12 +188,11 @@ const EpisodesTableData = <TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    {!header.isPlaceholder &&
+                      flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -235,30 +229,11 @@ const EpisodesTableData = <TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
-
-      <div className="mt-4">
-        <Button onClick={() => setAreOptionsEnabled(!areOptionsEnabled)}>
-          Toggle Options {areOptionsEnabled ? 'Disable' : 'Enable'}
-        </Button>
-      </div>
+      <MangeEpDialog
+        episodes={episodeData}
+        isOpen={isMangeEpDialogOpen}
+        onClose={closeMangeEpDialog}
+      />
     </div>
   );
 };
