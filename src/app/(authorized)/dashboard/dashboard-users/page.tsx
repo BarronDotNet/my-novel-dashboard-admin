@@ -1,7 +1,9 @@
+import DashboardUsers from '@/components/dashboard/dashboard-users';
+
 const Page = () => {
   return (
     <div>
-      <h1>Users</h1>
+      <DashboardUsers />
     </div>
   );
 };

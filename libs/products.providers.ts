@@ -350,25 +350,29 @@ export async function getPaginationEpisodesInProductNovel(
     .aggregate(pipeline)
     .toArray();
 
+  // Pipeline for counting total episodes matching criteria
+  const countPipeline: any[] = [
+    { $match: { 'EpTopic.ProductId': ProductId } },
+    { $unwind: '$EpTopic' },
+    { $match: { 'EpTopic.ProductId': ProductId } },
+  ];
+
+  if (searchBy) {
+    countPipeline.push({
+      $match: { 'EpTopic.EpName': { $regex: searchBy, $options: 'i' } },
+    });
+  }
+
+  countPipeline.push({ $count: 'count' });
+
   const totalEpisodes = await db
     .collection('products_info')
-    .aggregate([
-      { $match: { id: ProductId } },
-      { $unwind: '$EpTopic' },
-      ...(searchBy
-        ? [
-            {
-              $match: { 'EpTopic.EpName': { $regex: searchBy, $options: 'i' } },
-            },
-          ]
-        : []),
-      { $count: 'count' },
-    ])
+    .aggregate(countPipeline)
     .toArray();
 
   return {
     records: results.map((item) => item.EpTopic),
-    total: totalEpisodes[0]?.count || 0,
+    count: totalEpisodes[0]?.count || 0,
     page,
     perPage,
   };

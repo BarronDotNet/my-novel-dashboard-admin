@@ -100,7 +100,7 @@ const BooksDetail = () => {
 
       <div>
         <EpisodesTableData
-          columns={episodeColumns}
+          columns={episodeColumns(episodes?.count || 0)}
           data={episodes?.records || []}
           perPage={perPage}
           isLoading={episodesLoading}

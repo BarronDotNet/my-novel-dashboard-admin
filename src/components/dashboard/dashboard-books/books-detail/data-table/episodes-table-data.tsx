@@ -1,4 +1,4 @@
-'use client';
+import { useEffect, useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -20,8 +20,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -29,6 +27,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import CommonLoading from '@/components/common/loading';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { MdOutlinePublish } from 'react-icons/md';
+import { CiTimer } from 'react-icons/ci';
+import { LiaCalendarTimes } from 'react-icons/lia';
+import { MdOutlineHideImage } from 'react-icons/md';
+import { TiDeleteOutline } from 'react-icons/ti';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -36,6 +48,40 @@ interface DataTableProps<TData, TValue> {
   perPage: number;
   isLoading: boolean;
 }
+
+const manageOptions = [
+  {
+    label: 'ตั้งราคา',
+    value: 'setPrice',
+    icon: <img src="/images/M-coin.png" alt="Set Price" className="w-4 h-4" />,
+  },
+  {
+    label: 'เผยแพร่',
+    value: 'isPublish',
+    icon: <MdOutlinePublish />,
+  },
+  {
+    label: 'ตั้งเวลาเผยแพร่',
+    value: 'setIsPublish',
+    icon: <CiTimer />,
+  },
+  {
+    label: 'ยกเลิกตั้งเวลาเผยแพร่',
+    value: 'cancelSetIsPublish',
+    icon: <LiaCalendarTimes />,
+  },
+  {
+    label: 'ปิดเนื้อหา',
+    value: 'hidden',
+    icon: <MdOutlineHideImage />,
+  },
+  {
+    label: 'ลบ',
+    value: 'delete',
+    icon: <TiDeleteOutline />,
+  },
+];
+
 const EpisodesTableData = <TData, TValue>({
   columns,
   data,
@@ -46,6 +92,9 @@ const EpisodesTableData = <TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const [areOptionsEnabled, setAreOptionsEnabled] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('จัดการ');
 
   const table = useReactTable({
     data,
@@ -69,12 +118,49 @@ const EpisodesTableData = <TData, TValue>({
     },
   });
 
+  useEffect(() => {
+    const hasSelection = Object.keys(rowSelection).length > 0;
+    setAreOptionsEnabled(hasSelection);
+    if (!hasSelection) {
+      setSelectedOption('จัดการ');
+    }
+  }, [rowSelection]);
+
   if (isLoading) {
     return <CommonLoading />;
   }
 
   return (
     <div>
+      <div className="mt-5">
+        <Select>
+          <SelectTrigger
+            className={`w-[180px] ${!areOptionsEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={!areOptionsEnabled}
+          >
+            <SelectValue placeholder={selectedOption || 'จัดการ'} />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>ตัวเลือก</SelectLabel>
+              {manageOptions.map((option) => (
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  disabled={!areOptionsEnabled}
+                >
+                  <div className="flex items-center space-x-2">
+                    {option.icon}
+                    <span>{option.label}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -86,20 +172,16 @@ const EpisodesTableData = <TData, TValue>({
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -109,18 +191,16 @@ const EpisodesTableData = <TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -171,6 +251,12 @@ const EpisodesTableData = <TData, TValue>({
           disabled={!table.getCanNextPage()}
         >
           Next
+        </Button>
+      </div>
+
+      <div className="mt-4">
+        <Button onClick={() => setAreOptionsEnabled(!areOptionsEnabled)}>
+          Toggle Options {areOptionsEnabled ? 'Disable' : 'Enable'}
         </Button>
       </div>
     </div>

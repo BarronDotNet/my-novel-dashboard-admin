@@ -4,8 +4,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { FaRegEye } from 'react-icons/fa';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import { IProductEpisodes } from '@/interfaces/product-episodes.interface';
+import EditEpisodeDialogInColumns from '@/components/dashboard/dashboard-books/books-detail/data-table/edit-episode-dialog-in-columns';
+import { Button } from '@/components/ui/button';
 
-export const episodeColumns: ColumnDef<IProductEpisodes>[] = [
+export const episodeColumns = (
+  episodeCount: number
+): ColumnDef<IProductEpisodes>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -55,11 +59,29 @@ export const episodeColumns: ColumnDef<IProductEpisodes>[] = [
   {
     id: 'viewIcon',
     header: '',
-    cell: () => <FaRegEye className="text-gray-600" />,
+    cell: () => (
+      <Button variant="outline">
+        <FaRegEye className="text-gray-600" />
+      </Button>
+    ),
   },
   {
     id: 'menuIcon',
     header: '',
-    cell: () => <HiOutlineDotsHorizontal className="text-gray-600" />,
+    cell: ({ row }) => {
+      const currentIndex = row.index + 1;
+
+      return (
+        <div className="flex justify-center items-center gap-x-2">
+          <EditEpisodeDialogInColumns
+            currentEp={currentIndex}
+            totalEp={episodeCount}
+          />
+          <Button variant="outline">
+            <HiOutlineDotsHorizontal className="text-gray-600" />
+          </Button>
+        </div>
+      );
+    },
   },
 ];
