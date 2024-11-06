@@ -46,6 +46,20 @@ import { LiaCalendarTimes } from 'react-icons/lia';
 import { TiDeleteOutline } from 'react-icons/ti';
 import MangeEpDialog from '@/components/dashboard/dashboard-books/books-detail/ep-dialog/mange-ep-dialog';
 import { IProductEpisodes } from '@/interfaces/product-episodes.interface';
+import { Input } from '@/components/ui/input';
+import { Popover } from '@/components/ui/popover';
+import EpisodeDatePiker from '@/components/dashboard/dashboard-books/books-detail/ep-dialog/episode-date-piker';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface DataTableProps {
   columns: ColumnDef<IProductEpisodes>[];
@@ -128,10 +142,12 @@ const EpisodesTableData = ({
 
   return (
     <div>
-      <div className="mt-5">
+      <div className="mt-5 flex items-center gap-2">
         <Select onValueChange={handleSelectOption}>
           <SelectTrigger
-            className={`w-[180px] ${!areOptionsEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-[180px] ${
+              !areOptionsEnabled ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
             disabled={!areOptionsEnabled}
           >
             <SelectValue placeholder={selectedOption || 'การจัดการ'} />
@@ -154,6 +170,66 @@ const EpisodesTableData = ({
             </SelectGroup>
           </SelectContent>
         </Select>
+
+        {/* แสดง button ของ ตั้งค่าราเพื่อกดยืนยันการตั้งราคา */}
+        {selectedOption === 'setPrice' && (
+          <div className="flex justify-start items-center gap-2">
+            <Input type="number" placeholder="0" />
+            <Button variant="outline">ยืนยัน</Button>
+          </div>
+        )}
+
+        {selectedOption === 'isPublish' && (
+          <div className="flex justify-start items-center gap-2">
+            <Button variant="outline">ยืนยัน</Button>
+          </div>
+        )}
+
+        {selectedOption === 'setIsPublish' && (
+          <div className="flex justify-start items-center gap-2">
+            <Popover>
+              <EpisodeDatePiker />
+            </Popover>
+            <Button variant="outline">ยืนยัน</Button>
+          </div>
+        )}
+
+        {selectedOption === 'cancelSetIsPublish' && (
+          <div className="flex justify-start items-center gap-2">
+            <Button variant="outline">ยืนยัน</Button>
+          </div>
+        )}
+
+        {selectedOption === 'hidden' && (
+          <div className="flex justify-start items-center gap-2">
+            <Button variant="outline">ยืนยัน</Button>
+          </div>
+        )}
+
+        {selectedOption === 'delete' && (
+          <div className="flex justify-start items-center gap-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">ยืนยัน</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>คุณแน่ใจหรือว่าต้องการลบ?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    การกระทำนี้ไม่สามารถย้อนกลับได้ เมื่อยืนยันแล้ว
+                    ข้อมูลของคุณจะถูกลบออกจากระบบอย่างถาวร
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
+                  <AlertDialogAction className="bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500">
+                    ยืนยัน
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center py-4">

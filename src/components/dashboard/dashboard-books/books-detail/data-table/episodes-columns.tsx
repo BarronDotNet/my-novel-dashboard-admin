@@ -6,6 +6,17 @@ import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import { IProductEpisodes } from '@/interfaces/product-episodes.interface';
 import EditEpisodeDialogInColumns from '@/components/dashboard/dashboard-books/books-detail/data-table/edit-episode-dialog-in-columns';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export const episodeColumns = (
   episodeCount: number
@@ -44,7 +55,28 @@ export const episodeColumns = (
   {
     accessorKey: 'EpPrice',
     header: 'ราคา',
-    cell: ({ getValue }) => `฿${getValue()}`,
+    cell: ({ getValue }) => (
+      <div>
+        <span className="flex justify-start items-center gap-1">
+          <Image
+            width={50}
+            height={50}
+            className="h-4 w-4"
+            src="/images/M-coin.png"
+            alt="coin cover"
+          />
+          {Number(getValue())}
+        </span>
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'PublicByTime',
+    header: 'เวลาการเผยแพร่',
+    cell: ({ getValue }) => {
+      const value = getValue();
+      return value ? 'เผยแพร่แล้ว' : 'ไม่มีการตั้งเวลา';
+    },
   },
   {
     accessorKey: 'isPublish',
@@ -77,9 +109,20 @@ export const episodeColumns = (
             currentEp={currentIndex}
             totalEp={episodeCount}
           />
-          <Button variant="outline">
-            <HiOutlineDotsHorizontal className="text-gray-600" />
-          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <HiOutlineDotsHorizontal className="text-gray-600" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-auto">
+              <DropdownMenuGroup>
+                <DropdownMenuItem>แก้ไข</DropdownMenuItem>
+                <DropdownMenuItem>ลบ</DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       );
     },
