@@ -1,5 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import { tryit } from 'radash';
+import { IProductNovels } from '@/interfaces/product-novels.interface';
 
 interface IQueryProduct {
   page: number;
@@ -350,7 +351,6 @@ export async function getPaginationEpisodesInProductNovel(
     .aggregate(pipeline)
     .toArray();
 
-  // Pipeline for counting total episodes matching criteria
   const countPipeline: any[] = [
     { $match: { 'EpTopic.ProductId': ProductId } },
     { $unwind: '$EpTopic' },
@@ -377,3 +377,16 @@ export async function getPaginationEpisodesInProductNovel(
     perPage,
   };
 }
+
+export const findProductByIds = async (
+  mongoClient: MongoClient,
+  ids?: string[]
+): Promise<IProductNovels[]> => {
+  const db = mongoClient.db('product');
+  return db
+    .collection('products_info')
+    .find<IProductNovels>({
+      migrationDocumentId: { $in: ids },
+    })
+    .toArray();
+};

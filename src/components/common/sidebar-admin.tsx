@@ -48,6 +48,7 @@ import {
 } from '@/components/ui/sidebar';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { LuActivity } from 'react-icons/lu';
 
 const data = {
   user: {
@@ -74,30 +75,35 @@ const items = [
     icon: IoBookSharp,
   },
   {
+    title: 'จัดการกิจกรรม',
+    url: '/dashboard/dashboard-activities/',
+    icon: LuActivity,
+  },
+  {
     title: 'จัดการ Banner',
-    url: '#',
+    url: '/dashboard/dashboard-banner/',
     icon: PiFlagBanner,
   },
   {
     title: 'รายได้นักเขียน',
-    url: '#',
+    url: '/dashboard/dashboard-writer-income/',
     icon: GiMoneyStack,
   },
   {
     title: 'รายการถอนเงิน',
-    url: '#',
+    url: '/dashboard/dashboard-withdraw/',
     icon: PiHandWithdraw,
   },
   {
     title: 'รายการเติมเงิน',
-    url: '#',
+    url: '/dashboard/dashboard-top-up/',
     icon: PiHandDeposit,
   },
 ];
 
 const SidebarAdmin = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const pathSegments = pathname.split('/').filter((segment) => segment);
+  const pathSegments = pathname?.split('/').filter((segment) => segment);
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon">
@@ -246,7 +252,7 @@ const SidebarAdmin = ({ children }: { children: React.ReactNode }) => {
 
             <Breadcrumb>
               <BreadcrumbList>
-                {pathSegments.map((segment, index) => (
+                {pathSegments?.map((segment, index) => (
                   <React.Fragment key={index}>
                     <BreadcrumbItem>
                       <BreadcrumbLink
