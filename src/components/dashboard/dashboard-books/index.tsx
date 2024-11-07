@@ -19,13 +19,17 @@ const DashboardBooks = () => {
     string,
     number
   > | null>(null);
+  const [selectedTypeBook, setSelectedTypeBook] = useState<string>('');
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const sortParam = selectedSort ? JSON.stringify(selectedSort) : '{}';
+      const filterParam = selectedTypeBook
+        ? `&filter=${encodeURIComponent(JSON.stringify({ ProductTypeSet: selectedTypeBook }))}`
+        : '';
       const response = await fetch(
-        `/api/novels/get-product-pagination?page=${pageNumber}&perPage=${perPage}&searchBy=${searchQuery}&sort=${sortParam}`
+        `/api/novels/get-product-pagination?page=${pageNumber}&perPage=${perPage}&searchBy=${searchQuery}&sort=${sortParam}${filterParam}`
       );
       if (!response.ok) throw new Error('Failed to fetch data');
       const data: IPaginationRes<IProductNovels> = await response.json();
@@ -39,7 +43,8 @@ const DashboardBooks = () => {
 
   useEffect(() => {
     fetchData();
-  }, [pageNumber, perPage, searchQuery, selectedSort]);
+  }, [pageNumber, perPage, searchQuery, selectedSort, selectedTypeBook]);
+
   const totalPages = pagination ? Math.ceil(pagination.count / perPage) : 1;
   const handlePageChange = (newPage: number) => {
     setPageNumber(newPage);
@@ -50,6 +55,7 @@ const DashboardBooks = () => {
       <FilterBooksHeader
         onSearch={setSearchQuery}
         onSortChange={setSelectedSort}
+        onTypeBookChange={setSelectedTypeBook}
       />
 
       <div className="flex items-center justify-end mt-4">

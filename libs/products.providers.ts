@@ -8,6 +8,9 @@ interface IQueryProduct {
   sort: any;
   searchBy: string;
   categories: string[];
+  filterBy?: {
+    ProductTypeSet?: string;
+  };
   isFinished?: boolean;
 }
 
@@ -153,12 +156,13 @@ export async function getNovelPagination(
   mongoClient: MongoClient,
   query: IQueryProduct
 ) {
-  const { page, perPage, sort, searchBy, categories, isFinished } = query;
+  const { page, perPage, sort, searchBy, categories, isFinished, filterBy } =
+    query;
   const db = mongoClient.db('product');
 
   const matchStage = {
     $match: {
-      ProductTypeSet: 'Novel',
+      ProductTypeSet: filterBy?.ProductTypeSet,
       ...(searchBy && {
         $or: [
           { ProductName: { $regex: searchBy, $options: 'i' } },

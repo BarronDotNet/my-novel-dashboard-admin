@@ -14,9 +14,19 @@ export default async function handler(
       searchBy = '',
       categories = '',
       sort = '',
+      filter,
     } = req.query;
 
     const categoryArray = categories ? (categories as string).split(',') : [];
+
+    const filterBy: { ProductTypeSet?: string } = {};
+
+    if (filter) {
+      const parsedFilter = JSON.parse(filter as string);
+      if (parsedFilter.ProductTypeSet) {
+        filterBy.ProductTypeSet = parsedFilter.ProductTypeSet;
+      }
+    }
 
     let sortOption = {};
     if (sort && sort !== '{}') {
@@ -38,6 +48,7 @@ export default async function handler(
       sort: sortOption,
       searchBy: searchBy as string,
       categories: categoryArray,
+      filterBy,
     };
 
     const novels = await getNovelPagination(client, query);

@@ -28,17 +28,27 @@ const sortOptions: SortOption[] = [
   { label: 'ยังไม่เผยแพร่', value: { isPublish: 1 } },
 ];
 
+const typeBookOptions = [
+  { label: 'ทั้งหมด', value: '' },
+  { label: 'Novel', value: 'Novel' },
+  { label: 'Cartoon', value: 'Cartoon' },
+  { label: 'Ebook', value: 'Ebook' },
+];
+
 interface FilterBooksHeaderProps {
   onSearch: (query: string) => void;
   onSortChange: (sort: Record<string, number>) => void;
+  onTypeBookChange: (typeBook: string) => void;
 }
 
 const FilterBooksHeader = ({
   onSearch,
   onSortChange,
+  onTypeBookChange,
 }: FilterBooksHeaderProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSort, setSelectedSort] = useState(sortOptions[0]);
+  const [selectedTypeBook, setSelectedTypeBook] = useState(typeBookOptions[0]);
 
   const handleSearch = () => {
     onSearch(searchQuery);
@@ -52,9 +62,17 @@ const FilterBooksHeader = ({
     }
   };
 
+  const handleTypeBookChange = (label: string) => {
+    const selected = typeBookOptions.find((option) => option.label === label);
+    if (selected) {
+      setSelectedTypeBook(selected);
+      onTypeBookChange(selected.value);
+    }
+  };
+
   return (
     <div>
-      <div className="flex justify-between items-center p-4 rounded-lg">
+      <div className="flex justify-between items-center rounded-lg">
         <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:border-blue-500">
           <Input
             type="text"
@@ -72,21 +90,42 @@ const FilterBooksHeader = ({
           </Button>
         </div>
 
-        <Select value={selectedSort.label} onValueChange={handleSortChange}>
-          <SelectTrigger className="w-64 border-gray-300 rounded-lg">
-            <SelectValue placeholder={selectedSort.label} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>ตัวเลือกการจัดเรียง</SelectLabel>
-              {sortOptions.map((option, index) => (
-                <SelectItem key={index} value={option.label}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="flex justify-end items-center gap-2">
+          <Select
+            value={selectedTypeBook.label}
+            onValueChange={handleTypeBookChange}
+          >
+            <SelectTrigger className="w-64 border-gray-300 rounded-lg">
+              <SelectValue placeholder={selectedTypeBook.label} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>ประเภทหนังสือ</SelectLabel>
+                {typeBookOptions.map((option, index) => (
+                  <SelectItem key={index} value={option.label}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <Select value={selectedSort.label} onValueChange={handleSortChange}>
+            <SelectTrigger className="w-64 border-gray-300 rounded-lg">
+              <SelectValue placeholder={selectedSort.label} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>ตัวเลือกการจัดเรียง</SelectLabel>
+                {sortOptions.map((option, index) => (
+                  <SelectItem key={index} value={option.label}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );
