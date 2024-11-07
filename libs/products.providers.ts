@@ -160,27 +160,34 @@ export async function getNovelPagination(
     query;
   const db = mongoClient.db('product');
 
-  const matchStage = {
-    $match: {
-      ProductTypeSet: filterBy?.ProductTypeSet,
-      ...(searchBy && {
-        $or: [
-          { ProductName: { $regex: searchBy, $options: 'i' } },
-          { ProductIntro: { $regex: searchBy, $options: 'i' } },
-          { ProductGroup: { $regex: searchBy, $options: 'i' } },
-          { ProductPublisher: { $regex: searchBy, $options: 'i' } },
-          { FanClubTranslate: { $regex: searchBy, $options: 'i' } },
-        ],
-      }),
-      ...(categories.length > 0 && {
-        $or: [
-          { ProductType: { $in: categories } },
-          { ProductGroup: { $in: categories } },
-        ],
-      }),
-      ...(isFinished !== undefined && { isFinished }),
-    },
-  };
+  const matchConditions: any = {};
+
+  if (filterBy && filterBy.ProductTypeSet) {
+    matchConditions.ProductTypeSet = filterBy.ProductTypeSet;
+  }
+
+  if (searchBy) {
+    matchConditions.$or = [
+      { ProductName: { $regex: searchBy, $options: 'i' } },
+      { ProductIntro: { $regex: searchBy, $options: 'i' } },
+      { ProductGroup: { $regex: searchBy, $options: 'i' } },
+      { ProductPublisher: { $regex: searchBy, $options: 'i' } },
+      { FanClubTranslate: { $regex: searchBy, $options: 'i' } },
+    ];
+  }
+
+  if (categories.length > 0) {
+    matchConditions.$or = [
+      { ProductType: { $in: categories } },
+      { ProductGroup: { $in: categories } },
+    ];
+  }
+
+  if (isFinished !== undefined) {
+    matchConditions.isFinished = isFinished;
+  }
+
+  const matchStage = { $match: matchConditions };
 
   const sortStage = {
     $sort:

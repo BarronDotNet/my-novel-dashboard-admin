@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useState } from 'react';
-import CommonPagination from '@/components/common/pagination';
 
 type SortOption = { label: string; value: Record<string, number> };
 
