@@ -6,10 +6,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { IUsers } from '@/interfaces/users.interface';
+import { IUsers, UserRoleEnum } from '@/interfaces/users.interface';
 import CommonLoading from '@/components/common/loading';
-import { MdEditNote } from 'react-icons/md';
-import { Button } from '@/components/ui/button';
+import ManageUserDialog from '@/components/dashboard/dashboard-users/dialog/manage-user-dialog';
 
 const tableHeader = [
   { label: 'รหัสผู้ใช้', value: 'migrationDocumentId' },
@@ -53,12 +52,10 @@ const UsersTableData = ({ users, isLoading }: IProps) => {
                 <TableCell>{user.migrationDocumentId}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
+                <TableCell>{user.role || UserRoleEnum.USER}</TableCell>
                 <TableCell>{user.type}</TableCell>
                 <TableCell>
-                  <Button variant="outline">
-                    <MdEditNote />
-                  </Button>
+                  <ManageUserDialog user={user} />
                 </TableCell>
               </TableRow>
             ))

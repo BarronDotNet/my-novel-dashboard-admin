@@ -60,6 +60,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Dialog } from '@/components/ui/dialog';
 
 interface DataTableProps {
   columns: ColumnDef<IProductEpisodes>[];
@@ -305,11 +306,11 @@ const EpisodesTableData = ({
         </Table>
       </div>
 
-      <MangeEpDialog
-        episodes={episodeData}
-        isOpen={isMangeEpDialogOpen}
-        onClose={closeMangeEpDialog}
-      />
+      {isMangeEpDialogOpen && (
+        <Dialog open={isMangeEpDialogOpen} onOpenChange={closeMangeEpDialog}>
+          <MangeEpDialog episodes={episodeData} />
+        </Dialog>
+      )}
     </div>
   );
 };

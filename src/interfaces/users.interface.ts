@@ -1,6 +1,8 @@
 export enum UserRoleEnum {
-  USER = 'User',
   ADMIN = 'Admin',
+  EDITER = 'Editer',
+  PUBLISHER = 'Publisher',
+  USER = 'User',
 }
 
 export interface IUsers {

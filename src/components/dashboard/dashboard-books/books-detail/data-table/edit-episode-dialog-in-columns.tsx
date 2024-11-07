@@ -41,7 +41,7 @@ const EditEpisodeDialogInColumns = ({ currentEp, totalEp }: IProps) => {
           <LiaExchangeAltSolid />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>แก้ไขตอนที่ {currentEp}</DialogTitle>
         </DialogHeader>
