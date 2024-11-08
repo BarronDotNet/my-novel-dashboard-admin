@@ -24,6 +24,7 @@ const EditBookContent = ({ book, loading }: IProps) => {
   const [productAuthor, setProductAuthor] = useState('');
   const [translator, setTranslator] = useState('');
   const [productIntro, setProductIntro] = useState('');
+  const [productDetail, setProductDetail] = useState('');
 
   useEffect(() => {
     if (book) {
@@ -32,6 +33,7 @@ const EditBookContent = ({ book, loading }: IProps) => {
       setRate(book.ProductRate || '');
       setProductName(book.ProductName || '');
       setProductIntro(book.ProductIntro || '');
+      setProductDetail(book.ProductDetail || '');
       setProductAuthor(book.ProductAuthor || 'ไม่มีชื่อผู้แต่ง');
       setTranslator(book.Translator || 'ไม่มีชื่อผู้แปล');
     }
@@ -102,8 +104,11 @@ const EditBookContent = ({ book, loading }: IProps) => {
         </div>
       </Card>
 
-      <div>
-        <EditBookTextEditorContent />
+      <div className="w-full mt-6">
+        <EditBookTextEditorContent
+          content={productDetail}
+          onContentChange={setProductDetail}
+        />
       </div>
     </div>
   );
