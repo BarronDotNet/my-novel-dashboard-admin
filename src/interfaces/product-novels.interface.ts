@@ -1,5 +1,11 @@
 import { IProductEpisodes } from '@/interfaces/product-episodes.interface';
 
+export enum ProductTypeSetEnum {
+  NOVEL = 'Novel',
+  CARTOON = 'Cartoon',
+  EBOOK = 'Ebook',
+}
+
 export interface IProductNovels {
   migrationDocumentId: string;
   CreateBy: {
