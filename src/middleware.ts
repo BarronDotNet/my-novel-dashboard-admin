@@ -9,8 +9,6 @@ export function middleware(request: NextRequest) {
       new URL('/dashboard/dashboard-home', request.url)
     );
   }
-
-  return NextResponse.next();
 }
 
 export const config = {

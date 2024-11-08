@@ -11,6 +11,7 @@ import { MdModeEditOutline, MdDeleteOutline } from 'react-icons/md';
 import CommonLoading from '@/components/common/loading';
 import Link from 'next/link';
 import PageUrls from '@/constants/page-urls';
+import DeleteBookDialog from '@/components/dashboard/dashboard-users/dialog/delete-book-dialog';
 
 interface IProps {
   books?: IProductNovels[];
@@ -61,12 +62,16 @@ const BooksTableData = ({ books, isLoading }: IProps) => {
                   {book.isPublish ? 'เผยแพร่แล้ว' : 'ยังไม่เผยแพร่'}
                 </TableCell>
                 <TableCell className="p-4 flex space-x-2">
-                  <button className="text-blue-500 hover:text-blue-700">
+                  <Link
+                    href={`/dashboard/dashboard-books/update/${book._id}`}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
                     <MdModeEditOutline size={20} />
-                  </button>
-                  <button className="text-red-500 hover:text-red-700">
-                    <MdDeleteOutline size={20} />
-                  </button>
+                  </Link>
+                  <DeleteBookDialog
+                    id={book.migrationDocumentId}
+                    bookName={book.ProductName}
+                  />
                 </TableCell>
               </TableRow>
             ))
