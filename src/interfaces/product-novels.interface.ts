@@ -5,6 +5,11 @@ export enum ProductTypeSetEnum {
   CARTOON = 'Cartoon',
   EBOOK = 'Ebook',
 }
+export enum OnDeviceEnum {
+  ALL = 'ALL',
+  MOBILE = 'MOBILE',
+  WEBSITE = 'WEBSITE',
+}
 
 export interface IProductNovels {
   migrationDocumentId: string;

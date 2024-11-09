@@ -1,13 +1,19 @@
 'use client';
+
+import { useState, ChangeEvent } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import UploadBookCover from '@/components/dashboard/dashboard-books/edit-book/upload-book-cover';
+import UploadBookCover from '@/components/dashboard/dashboard-books/create/upload-book-cover/upload-book-cover';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import EditBookOptions from '@/components/dashboard/dashboard-books/edit-book/book-categories/edit-book-options';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import EditBookTextEditorContent from '@/components/dashboard/dashboard-books/edit-book/edit-book-text-editor-content';
-import { IProductNovels } from '@/interfaces/product-novels.interface';
-import { useEffect, useState } from 'react';
+import { CiSaveDown2 } from 'react-icons/ci';
+import { MdOutlineCancelPresentation } from 'react-icons/md';
+import Link from 'next/link';
 import {
   Select,
   SelectContent,
@@ -17,13 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { CiSaveDown2 } from 'react-icons/ci';
-import { MdOutlineCancelPresentation } from 'react-icons/md';
-import { useRouter } from 'next/navigation';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 
 interface TagOption {
   value: string;
@@ -41,50 +40,20 @@ const novelTypeOptions: TagOption[] = [
   { value: 'นิยายแปล', label: 'นิยายแปล' },
 ];
 
-interface IProps {
-  book?: IProductNovels | null;
-}
-
-const NovelEpisode = ({ book }: IProps) => {
-  const router = useRouter();
-  const [mainCategory, setMainCategory] = useState('');
-  const [secondaryCategory, setSecondaryCategory] = useState('');
-  const [rate, setRate] = useState('');
+const CreateNovel = () => {
   const [productName, setProductName] = useState('');
   const [productAuthor, setProductAuthor] = useState('');
   const [translator, setTranslator] = useState('');
   const [productIntro, setProductIntro] = useState('');
-  const [fanClubTranslate, setFanClubTranslate] = useState('');
   const [productDetail, setProductDetail] = useState('');
   const [isPublish, setIsPublish] = useState(false);
   const [productTags, setProductTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
-
-  useEffect(() => {
-    if (book) {
-      setMainCategory(book.ProductGroup || '');
-      setSecondaryCategory(book.ProductType || '');
-      setRate(book.ProductRate || '');
-      setProductName(book.ProductName || '');
-      setProductIntro(book.ProductIntro || '');
-      setProductDetail(book.ProductDetail || '');
-      setFanClubTranslate(book.fanClubTranslate || '');
-      setProductTags(book.ProductTags || []);
-      setIsPublish(book.isPublish || false);
-      setProductAuthor(book.ProductAuthor || 'ไม่มีชื่อผู้แต่ง');
-      setTranslator(book.Translator || 'ไม่มีชื่อผู้แปล');
-    }
-  }, [book]);
-
-  const handlePublishToggle = () => {
-    setIsPublish((prev) => !prev);
-  };
-
-  const handleCancelButton = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    router.push('/dashboard/dashboard-books/');
-  };
+  const [fanClubTranslate, setFanClubTranslate] = useState('');
+  const [mainCategory, setMainCategory] = useState('');
+  const [secondaryCategory, setSecondaryCategory] = useState('');
+  const [rate, setRate] = useState('');
 
   const handleAddTag = () => {
     if (newTag && !productTags.includes(newTag)) {
@@ -102,13 +71,37 @@ const NovelEpisode = ({ book }: IProps) => {
     setShowSuggestions(false);
   };
 
+  const handlePublishToggle = () => {
+    setIsPublish((prev) => !prev);
+  };
+
+  const handleSubmit = () => {
+    const payload = {
+      productName,
+      productAuthor,
+      translator,
+      productIntro,
+      productDetail,
+      isPublish,
+      productTags,
+      fanClubTranslate,
+      mainCategory,
+      secondaryCategory,
+      rate,
+    };
+    console.log('Form data:', payload);
+  };
+
+  const handleCancelButton = () => {
+    console.log('Canceled');
+  };
+
   return (
     <div>
-      <h2 className="w-full font-bold text-2xl mb-2">อัพเดทนิยายรายตอน</h2>
-
+      <h2 className="w-full font-bold text-2xl mb-2">สร้างนิยายรายตอน</h2>
       <Card className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-5">
         <div className="lg:col-span-1 flex justify-center">
-          <UploadBookCover bookCover={book?.ImageUrl} />
+          <UploadBookCover bookCover={null} />
         </div>
         <div className="lg:col-span-3">
           <div className="w-full flex flex-col space-y-1.5 mb-3">
@@ -131,7 +124,6 @@ const NovelEpisode = ({ book }: IProps) => {
                 onChange={(e) => setProductAuthor(e.target.value)}
               />
             </div>
-
             <div>
               <Label htmlFor="translator">ผู้แปล</Label>
               <Input
@@ -311,6 +303,7 @@ const NovelEpisode = ({ book }: IProps) => {
         <Button
           variant="outline"
           className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+          onClick={handleSubmit}
         >
           <CiSaveDown2 /> บันทึก
         </Button>
@@ -322,4 +315,4 @@ const NovelEpisode = ({ book }: IProps) => {
   );
 };
 
-export default NovelEpisode;
+export default CreateNovel;

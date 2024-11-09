@@ -1,13 +1,24 @@
 'use client';
+
+import {
+  IProductNovels,
+  OnDeviceEnum,
+} from '@/interfaces/product-novels.interface';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import UploadBookCover from '@/components/dashboard/dashboard-books/edit-book/upload-book-cover';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import EditBookOptions from '@/components/dashboard/dashboard-books/edit-book/book-categories/edit-book-options';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import EditBookTextEditorContent from '@/components/dashboard/dashboard-books/edit-book/edit-book-text-editor-content';
-import { IProductNovels } from '@/interfaces/product-novels.interface';
-import { useEffect, useState } from 'react';
+import { CiSaveDown2 } from 'react-icons/ci';
+import { MdOutlineCancelPresentation } from 'react-icons/md';
+import Link from 'next/link';
 import {
   Select,
   SelectContent,
@@ -17,13 +28,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { CiSaveDown2 } from 'react-icons/ci';
-import { MdOutlineCancelPresentation } from 'react-icons/md';
-import { useRouter } from 'next/navigation';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 
 interface TagOption {
   value: string;
@@ -36,16 +40,17 @@ const initialTagsOption: TagOption[] = [
   { value: 'ผู้กล้า', label: 'ผู้กล้า' },
 ];
 
-const novelTypeOptions: TagOption[] = [
-  { value: 'นิยายแต่ง', label: 'นิยายแต่ง' },
-  { value: 'นิยายแปล', label: 'นิยายแปล' },
+const deviceOption: TagOption[] = [
+  { value: OnDeviceEnum.ALL, label: 'ทั้งหมด' },
+  { value: OnDeviceEnum.MOBILE, label: 'มือถือ' },
+  { value: OnDeviceEnum.WEBSITE, label: 'เว็บ' },
 ];
 
 interface IProps {
   book?: IProductNovels | null;
 }
 
-const NovelEpisode = ({ book }: IProps) => {
+const EditEBook = ({ book }: IProps) => {
   const router = useRouter();
   const [mainCategory, setMainCategory] = useState('');
   const [secondaryCategory, setSecondaryCategory] = useState('');
@@ -54,12 +59,12 @@ const NovelEpisode = ({ book }: IProps) => {
   const [productAuthor, setProductAuthor] = useState('');
   const [translator, setTranslator] = useState('');
   const [productIntro, setProductIntro] = useState('');
-  const [fanClubTranslate, setFanClubTranslate] = useState('');
   const [productDetail, setProductDetail] = useState('');
   const [isPublish, setIsPublish] = useState(false);
   const [productTags, setProductTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [onDevice, setOnDevice] = useState<OnDeviceEnum>(OnDeviceEnum.ALL);
 
   useEffect(() => {
     if (book) {
@@ -69,7 +74,7 @@ const NovelEpisode = ({ book }: IProps) => {
       setProductName(book.ProductName || '');
       setProductIntro(book.ProductIntro || '');
       setProductDetail(book.ProductDetail || '');
-      setFanClubTranslate(book.fanClubTranslate || '');
+      setOnDevice((book.onDevice as OnDeviceEnum) || OnDeviceEnum.ALL);
       setProductTags(book.ProductTags || []);
       setIsPublish(book.isPublish || false);
       setProductAuthor(book.ProductAuthor || 'ไม่มีชื่อผู้แต่ง');
@@ -104,8 +109,7 @@ const NovelEpisode = ({ book }: IProps) => {
 
   return (
     <div>
-      <h2 className="w-full font-bold text-2xl mb-2">อัพเดทนิยายรายตอน</h2>
-
+      <h2 className="w-full font-bold text-2xl mb-2">อัพเดทอีบุ๊ค</h2>
       <Card className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-5">
         <div className="lg:col-span-1 flex justify-center">
           <UploadBookCover bookCover={book?.ImageUrl} />
@@ -243,28 +247,28 @@ const NovelEpisode = ({ book }: IProps) => {
           </div>
 
           <div className="w-full grid gap-4 mb-3">
-            <div>
-              <Label htmlFor="novelType">ประเภทนิยาย</Label>
-              <Select
-                value={fanClubTranslate}
-                onValueChange={setFanClubTranslate}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="เลือกประเภทนิยาย" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>ประเภทนิยาย</SelectLabel>
-                    {novelTypeOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+            <Label htmlFor="onDevice">การแสดงผลของอุปกรณ์</Label>
+            <Select
+              onValueChange={(value: OnDeviceEnum) => setOnDevice(value)}
+              value={onDevice}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="เลือกการแสดงผลของอุปกรณ์" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>การแสดงผลของอุปกรณ์</SelectLabel>
+                  {deviceOption.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
 
+          <div className="w-full grid gap-4 mb-3">
             <div>
               <Label htmlFor="publishStatus">การเผยแพร่</Label>
               <div className="flex items-center space-x-2">
@@ -321,5 +325,4 @@ const NovelEpisode = ({ book }: IProps) => {
     </div>
   );
 };
-
-export default NovelEpisode;
+export default EditEBook;

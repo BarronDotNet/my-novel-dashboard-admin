@@ -1,13 +1,21 @@
 'use client';
+
+import { IProductNovels } from '@/interfaces/product-novels.interface';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import UploadBookCover from '@/components/dashboard/dashboard-books/edit-book/upload-book-cover';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import EditBookOptions from '@/components/dashboard/dashboard-books/edit-book/book-categories/edit-book-options';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import EditBookTextEditorContent from '@/components/dashboard/dashboard-books/edit-book/edit-book-text-editor-content';
-import { IProductNovels } from '@/interfaces/product-novels.interface';
-import { useEffect, useState } from 'react';
+import { CiSaveDown2 } from 'react-icons/ci';
+import { MdOutlineCancelPresentation } from 'react-icons/md';
+import Link from 'next/link';
 import {
   Select,
   SelectContent,
@@ -17,13 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { CiSaveDown2 } from 'react-icons/ci';
-import { MdOutlineCancelPresentation } from 'react-icons/md';
-import { useRouter } from 'next/navigation';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 
 interface TagOption {
   value: string;
@@ -36,16 +37,16 @@ const initialTagsOption: TagOption[] = [
   { value: 'ผู้กล้า', label: 'ผู้กล้า' },
 ];
 
-const novelTypeOptions: TagOption[] = [
-  { value: 'นิยายแต่ง', label: 'นิยายแต่ง' },
-  { value: 'นิยายแปล', label: 'นิยายแปล' },
+const cartoonTypeOptions: TagOption[] = [
+  { value: 'การ์ตูนแปล', label: 'การ์ตูนแปล' },
+  { value: 'การ์ตูนไทย', label: 'การ์ตูนไทย' },
 ];
 
 interface IProps {
   book?: IProductNovels | null;
 }
 
-const NovelEpisode = ({ book }: IProps) => {
+const EditCartoonBook = ({ book }: IProps) => {
   const router = useRouter();
   const [mainCategory, setMainCategory] = useState('');
   const [secondaryCategory, setSecondaryCategory] = useState('');
@@ -54,7 +55,6 @@ const NovelEpisode = ({ book }: IProps) => {
   const [productAuthor, setProductAuthor] = useState('');
   const [translator, setTranslator] = useState('');
   const [productIntro, setProductIntro] = useState('');
-  const [fanClubTranslate, setFanClubTranslate] = useState('');
   const [productDetail, setProductDetail] = useState('');
   const [isPublish, setIsPublish] = useState(false);
   const [productTags, setProductTags] = useState<string[]>([]);
@@ -69,7 +69,6 @@ const NovelEpisode = ({ book }: IProps) => {
       setProductName(book.ProductName || '');
       setProductIntro(book.ProductIntro || '');
       setProductDetail(book.ProductDetail || '');
-      setFanClubTranslate(book.fanClubTranslate || '');
       setProductTags(book.ProductTags || []);
       setIsPublish(book.isPublish || false);
       setProductAuthor(book.ProductAuthor || 'ไม่มีชื่อผู้แต่ง');
@@ -104,8 +103,7 @@ const NovelEpisode = ({ book }: IProps) => {
 
   return (
     <div>
-      <h2 className="w-full font-bold text-2xl mb-2">อัพเดทนิยายรายตอน</h2>
-
+      <h2 className="w-full font-bold text-2xl mb-2">อัพเดทการ์ตูน</h2>
       <Card className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-5">
         <div className="lg:col-span-1 flex justify-center">
           <UploadBookCover bookCover={book?.ImageUrl} />
@@ -242,32 +240,29 @@ const NovelEpisode = ({ book }: IProps) => {
             </div>
           </div>
 
+          <div className="grid gap-2 mt-2 mb-2">
+            <Label htmlFor="publishStatus">ประเภทการ์ตูน</Label>
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="เลือกประเภทการ์ตูน" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>เลือกประเภทการ์ตูน</SelectLabel>
+                  {cartoonTypeOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="w-full grid gap-4 mb-3">
             <div>
-              <Label htmlFor="novelType">ประเภทนิยาย</Label>
-              <Select
-                value={fanClubTranslate}
-                onValueChange={setFanClubTranslate}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="เลือกประเภทนิยาย" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>ประเภทนิยาย</SelectLabel>
-                    {novelTypeOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
               <Label htmlFor="publishStatus">การเผยแพร่</Label>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center mt-2 space-x-2">
                 <Checkbox
                   id="publishStatus"
                   checked={isPublish}
@@ -321,5 +316,4 @@ const NovelEpisode = ({ book }: IProps) => {
     </div>
   );
 };
-
-export default NovelEpisode;
+export default EditCartoonBook;

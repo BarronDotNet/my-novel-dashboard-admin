@@ -12,6 +12,7 @@ import CommonLoading from '@/components/common/loading';
 import Link from 'next/link';
 import PageUrls from '@/constants/page-urls';
 import DeleteBookDialog from '@/components/dashboard/dashboard-users/dialog/delete-book-dialog';
+import Image from 'next/image';
 
 interface IProps {
   books?: IProductNovels[];
@@ -20,6 +21,7 @@ interface IProps {
 
 const headerTable = [
   { label: 'ชื่อ', value: 'ProductName' },
+  { label: 'ราคา', value: 'ProductPrice' },
   { label: 'ประเภทหนังสือ', value: 'ProductTypeSet' },
   { label: 'ประเภท', value: 'ProductType' },
   { label: 'ยอดการดู', value: 'ProductView' },
@@ -28,11 +30,10 @@ const headerTable = [
   { label: 'การจัดการ', value: 'action' },
 ];
 
-const BooksTableData = ({ books, isLoading }: IProps) => {
+const EBooksTableData = ({ books, isLoading }: IProps) => {
   if (isLoading) {
     return <CommonLoading />;
   }
-
   return (
     <div>
       <Table className="p-5">
@@ -56,6 +57,16 @@ const BooksTableData = ({ books, isLoading }: IProps) => {
                   >
                     {book.ProductName}
                   </Link>
+                </TableCell>
+                <TableCell className="p-4 flex items-center gap-2">
+                  <Image
+                    width={50}
+                    height={60}
+                    src="/images/M-coin.png"
+                    alt="coin icon"
+                    className="h-4 w-4"
+                  />{' '}
+                  {book.ProductPrice}
                 </TableCell>
                 <TableCell className="p-4">{book.ProductTypeSet}</TableCell>
                 <TableCell className="p-4">{book.ProductType}</TableCell>
@@ -94,4 +105,4 @@ const BooksTableData = ({ books, isLoading }: IProps) => {
   );
 };
 
-export default BooksTableData;
+export default EBooksTableData;
